@@ -1,0 +1,457 @@
+.navbar-nav .nav-item {
+  margin-right: 20px; /* 각 nav-item 요소의 오른쪽에 간격 추가 */
+}
+
+.navbar-nav .nav-item:last-child {
+  margin-right: 0; /* 마지막 nav-item은 오른쪽에 간격을 주지 않음 */
+}
+
+.image {
+  width: 100%;
+  height: 800px;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-text {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  width: 100%; /* 중앙 정렬 보장 */
+}
+
+/* 소비기한 계산 버튼 */
+.calculate-button {
+  position: absolute;
+  top: 70%; /* 이미지 높이의 70% 지점에 배치 */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10; /* 다른 요소보다 위에 배치 */
+}
+
+/* 소비기한 계산하기 버튼 스타일 */
+.calculate-button .btn-primary {
+  background-color: #562BFF; /* 버튼 배경색 */
+  color: white; /* 버튼 텍스트 색상 */
+  font-weight: bold; /* 텍스트 굵기 */
+  padding: 15px 30px; /* 버튼의 내부 여백 */
+  font-size: 1.2rem; /* 텍스트 크기 */
+  border-radius: 8px; /* 버튼의 모서리 둥글기 */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* 버튼에 그림자 추가 */
+  border: none; /* 테두리 제거 */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* 마우스 오버 시 애니메이션 */
+}
+
+.calculate-button .btn-primary:hover {
+  background-color: #7A5FFF; /* 마우스 오버 시 버튼 배경색 */
+  transform: translateY(-2px); /* 마우스 오버 시 버튼이 약간 위로 올라가는 효과 */
+}
+
+.calculate-button .btn-primary:active {
+  background-color: #3F2DBF; /* 클릭 시 버튼 배경색 */
+  transform: translateY(1px); /* 클릭 시 버튼이 약간 눌리는 효과 */
+}
+
+.calculate-button .btn-primary:focus {
+  box-shadow: 0 0 0 0.2rem rgba(122, 95, 255, 0.5); /* 포커스 시 그림자 효과 */
+}
+
+/* 소비기한 계산 모달 스타일 */
+.expiry-modal .modal-dialog {
+  max-width: 50% !important; /* 너비를 화면의 80%로 설정 */
+  height: 90vh !important; /* 높이를 화면 높이의 90%로 설정 */
+  max-height: 90vh !important; /* 최대 높이를 화면 높이의 90%로 설정 */
+}
+
+.expiry-modal .modal-content {
+  height: 100%; /* 콘텐츠 높이를 100%로 설정 */
+  padding: 16px; /* 패딩 조정 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 모달 내부 필드 정렬 및 간격 조정 */
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* 요소들 사이의 간격을 일정하게 */
+  padding: 2rem;
+  max-height: 70vh; /* 모달 본문의 최대 높이 설정 */
+  overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능 */
+}
+
+.form-control {
+  width: 100%; /* 모든 입력 필드의 너비를 100%로 설정 */
+  margin-bottom: 1rem; /* 필드 간 간격 */
+}
+
+.alias-container,
+.category-select-container,
+.fields-container {
+  margin-bottom: 0.5rem; /* 컨테이너 간 간격 조정 */
+  width: 100%; /* 너비를 100%로 설정하여 중앙 정렬 */
+}
+
+.fields-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* 필드 사이 간격 */
+}
+
+/* 모달창 내부 수평 정렬 */
+.btn-category {
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+}
+
+.alias-container input,
+.category-select-container select,
+.category-select-container button {
+  margin-top: 0; /* 상단 여백 제거 */
+}
+
+.file-upload-container input + input {
+margin-left: 4%; /* 입력 필드들 사이 간격 설정 */
+}
+
+.alias-container input + input {
+  margin-left: 4%;
+}
+
+.category-select-container select + button {
+  margin-left: 4%;
+}
+
+.calculatedExpiryField{
+margin-bottom: 0%;
+}
+
+
+/* 캘린더 일정 추가 모달 스타일 */
+.calendar-modal .modal-dialog {
+  max-width: 50% !important; /* 캘린더 모달에 다른 너비를 적용 */
+  height: auto !important; /* 높이를 자동으로 설정 */
+}
+
+.calendar-modal .modal-content {
+  height: auto; /* 콘텐츠 높이를 자동으로 설정 */
+  padding: 16px; /* 캘린더 모달에 다른 패딩을 적용 */
+}
+
+/* 기타 스타일 */
+.date {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+}
+
+.btn-date {
+  background-color: #562BFF;
+  color: white;
+  text-align: center;
+  font-weight: 200;
+  margin-top: 15px;
+  font-size: 1.3em;
+  padding: 20px 30px;
+}
+
+.btn-look {
+  background-color: #562BFF;
+  color: white;
+  text-align: center;
+  font-weight: 200;
+}
+
+.btn-look2 {
+  background-color: #7AA7FF;
+  color: white;
+  text-align: center;
+  font-weight: 200;
+}
+
+.img {
+  min-height: initial;
+}
+
+.login-section {
+  text-align: center;
+  margin-top: 150px;
+  margin-bottom: 100px;
+}
+
+.login-section h1 {
+  margin-bottom: 30px;
+}
+
+.login-section .btn {
+  display: block;
+  width: 300px;
+  margin: 10px auto;
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+}
+
+.login-section .btn-google {
+  background-color: #4285F4;
+}
+
+.login-section .btn-naver {
+  background-color: #03C75A;
+}
+
+.login-section p {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Footer */
+#footer {
+  width: 100%;
+  float: left;
+  display: block;
+  height: 250px;
+  line-height: 100px;
+  color: #000000;
+  background-color: #fff;
+  bottom: 0%;
+}
+
+.center {
+  margin-left: 500px;
+}
+
+.line {
+  width: 100%;
+  height: 1px;
+  margin-top: 10px;
+  background-color: black;
+}
+
+.look-line {
+  width: 100%;
+  margin-left: 500px;
+  height: 1px;
+  margin-top: 10px;
+  background-color: black;
+}
+
+.sns {
+  width: 200px;
+}
+
+/* 등록한 제품 조회 창 스타일 */
+/* 정렬 스타일 1: 카드형 레이아웃 */
+.style1 #productGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* 카드들을 왼쪽 정렬 */
+}
+
+.style1 .product-item {
+  flex-basis: calc(33.3333% - 20px); /* 각 카드의 크기 설정 */
+  max-width: calc(33.3333% - 20px); /* 최대 너비 설정 */
+  box-sizing: border-box; /* 패딩과 보더를 너비/높이 계산에 포함 */
+  margin-left: 17px;
+}
+
+.style1 .product-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* 이미지 컨테이너의 고정 높이 */
+  background-color: #f8f9fa; /* 이미지가 없는 경우에 배경 색상 추가 */
+}
+
+.style1 .product-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* 이미지를 컨테이너 안에 맞춤 */
+}
+
+.style1 .card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 200px; /* 카드의 고정 높이 설정 */
+  box-sizing: border-box;
+  margin-bottom: 20px; /* 카드들 사이의 간격 추가 */
+}
+
+.style1 .card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.style1 .card-body .mt-auto {
+  margin-top: auto; /* 소비기한을 하단으로 이동 */
+}
+
+.style1 .card-footer {
+  margin-top: auto; /* 푸터를 카드 하단에 고정 */
+  padding: 0.5rem 0;
+}
+
+/* 화면 크기에 따른 카드 크기 조정 */
+@media (min-width: 576px) {
+  .style1 .product-item {
+    flex-basis: calc(50% - 20px); /* 작은 화면에서 두 개의 카드 배치 */
+  }
+}
+
+@media (min-width: 768px) {
+  .style1 .product-item {
+    flex-basis: calc(33.3333% - 20px); /* 중간 화면 이상에서 세 개의 카드 배치 */
+  }
+}
+
+/* 정렬 스타일 2: 리스트형 레이아웃 */
+/* 정렬 스타일 2: 리스트형 레이아웃 */
+/* style2 전용 카드 스타일 */
+.style2 #productGrid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.style2 .product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.style2 .card {
+  flex-grow: 1;
+  max-width: 100%;
+}
+
+.style2 .product-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  margin-right: 20px;
+  background-color: #f8f9fa;
+}
+
+.style2 .product-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+
+.style2 .product-info {
+  flex-grow: 1;
+  margin-right: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.style2 .product-expiry,
+.style2 .product-calendar {
+  margin-left: 20px;
+  flex-shrink: 0;
+}
+
+.style2 .product-calendar {
+  display: flex;
+  align-items: center; /* 수직 가운데 정렬 */
+  gap: 10px; /* 버튼 사이의 간격 */
+}
+
+.style2 .product-calendar .btn {
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+
+/* 작은 화면에서도 style2는 한 줄에 하나의 제품이 유지되도록 설정 */
+@media (max-width: 768px) {
+  .style2 .product-item {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .style2 .product-image {
+    width: 100%;
+    height: auto;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .style2 .product-calendar {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .style2 .product-calendar .btn {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+}
+
+
+/* FullCalendar 관련 스타일 */
+.fc {
+  direction: ltr;
+  text-align: left;
+}
+
+.fc-header-toolbar {
+  padding-top: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.selected-event {
+  border: 2px solid red; /* 테두리를 빨간색으로 표시 */
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); /* 클릭한 이벤트에 그림자 추가 */
+}
+
+/* 달력의 전체 스타일 조정 */
+#calendar-container {
+  margin-top: 2em;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#calendar {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.navbar-toggler:hover + .navbar-collapse {
+  display: block !important;
+}
+
+#area {
+  width: 100%;
+  height: 200px;
+  line-height: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}

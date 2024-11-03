@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-xl">
+            <a class="navbar-brand" href="/">
+                <img src="/images/logo.png" alt="써도되나" title="써도되나">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse m-5" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-5 ml-auto">
+                    <li class="nav-item d-inline text-right">
+                        <a class="nav-link" href="/">제품 소비기한 계산 및 등록</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/look">내 제품 소비기한 조회</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/calendar">캘린더 일정 확인하기</a>
+                    </li>
+                </ul>
+                <!-- 로그인 상태에 따라 로그인/로그아웃 버튼 표시 -->
+                <% if (user) { %>
+                    <button class="btn btn-look" id="logoutButton">로그아웃</button>
+                <% } else { %>
+                    <button class="btn btn-look" onClick="location.href='/login'">로그인</button>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+    
+    <h1>User Profile</h1>
+    <div id="user-profile"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+
+            if (token) {
+                // 토큰을 로컬 스토리지에 저장
+                localStorage.setItem('jwt', token);
+
+                // 토큰을 사용하여 사용자 정보를 요청
+                fetch('http://localhost:3000/api/user', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('User data:', data);
+                    // 사용자 정보를 화면에 표시
+                    document.getElementById('user-profile').innerText = JSON.stringify(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                });
+            }
+        });
+    </script>
+    <script src="/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+          const logoutButton = document.getElementById('logoutButton');
+          if (logoutButton) {
+            logoutButton.addEventListener('click', () => {
+              fetch('/auth/logout', {
+                method: 'GET',
+                credentials: 'include'
+              })
+              .then(response => {
+                if (response.redirected) {
+                  window.location.href = response.url;
+                }
+              })
+              .catch(error => {
+                console.error('Logout error:', error);
+              });
+            });
+          }
+        });
+      </script>
+</body>
+</html>

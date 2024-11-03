@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>써도 되나?</title>
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.css" rel="stylesheet">
+</head>
+
+<body style="padding:30px;">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-xl">
+      <a class="navbar-brand" href="/">
+        <img src="/images/logo.png" alt="써도되나" title="써도되나">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse m-5" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-5 ml-auto">
+          <li class="nav-item d-inline text-right">
+            <a class="nav-link" href="/">제품 소비기한 계산 및 등록</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/look">내 제품 소비기한 조회</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="#">캘린더 일정 확인하기</a>
+          </li>
+        </ul>
+        <% if (user) { %>
+          <button class="btn btn-look" id="logoutButton">로그아웃</button>
+          <% } else { %>
+            <button class="btn btn-look" onClick="location.href='/login'">로그인</button>
+            <% } %>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-xl">
+    <div class="label-text">
+      <p class="h2 mb-0 mt-5 text-black font-weight-bolder ml-5 text-left d-block">캘린더 일정 확인하기</p>
+      <p class="h5 mt-3 mb-5 text-black text-left d-block ml-5">내 계정과 연동된 캘린더에서 소비기한을 편리하게 확인하세요.</p>
+    </div>
+  </div>
+
+  <div class="container-xl mt-5">
+    <div id="calendar-container">
+      <div id="calendar"></div>
+    </div>
+  </div>
+
+  <!-- 부트스트랩 modal 부분 -->
+  <!-- Modal -->
+  <div class="modal fade calendar-modal" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="calendarModalLabel">일정 추가하기</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          일정이름 : <input type="text" id="alias" /><br /> <!-- 여기서 id를 'alias'로 변경 -->
+          시작시간 : <input type="datetime-local" id="start" /><br />
+          배경색상 :
+          <select id="color">
+            <option value="red">빨강색</option>
+            <option value="orange">주황색</option>
+            <option value="yellow">노랑색</option>
+            <option value="green">초록색</option>
+            <option value="blue">파랑색</option>
+            <option value="indigo">남색</option>
+            <option value="purple">보라색</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+          <button type="button" class="btn btn-primary" id="saveChanges">추가</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <div class="line mt-5"></div>
+      <img src="/images/logo.png" class="mt-5" alt="">
+      <img src="/images/sns.png" class="d-block mt-2 sns" alt="">
+      <p class="text-dark">Copyright(c) 2024 써도 되나?. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- 사용자 provider 정보를 JavaScript 변수에 전달 -->
+  <script>
+    var userProvider = "<%= user ? user.provider : '' %>";
+  </script>
+
+  <!-- FullCalendar 및 jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/locales-all.min.js"></script>
+
+  <!-- Axios 추가 -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <!-- Bootstrap JavaScript 추가 -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
+
+  <!-- 캘린더 로직을 calendar.js로 분리 -->
+  <script src="/js/calendar.js"></script>
+
+  <!-- 로그아웃 기능 추가 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+      const logoutButton = document.getElementById('logoutButton');
+      if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+          fetch('/auth/logout', {
+            method: 'GET',
+            credentials: 'include'
+          })
+            .then(response => {
+              if (response.redirected) {
+                window.location.href = response.url;
+              }
+            })
+            .catch(error => {
+              console.error('Logout error:', error);
+            });
+        });
+      }
+    });
+  </script>
+
+  <!-- look.ejs의 캘린더에 등록하기 버튼을 눌렀을 경우 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // URL 파라미터에서 productName과 expiryDate 값을 가져오기
+      const urlParams = new URLSearchParams(window.location.search);
+      const productName = urlParams.get('productName');
+      const expiryDate = urlParams.get('expiryDate');
+
+      // 만약 URL 파라미터에 productName과 expiryDate가 있으면 모달을 자동으로 열고 값을 입력
+      if (productName && expiryDate) {
+        // 모달 창 열기
+        $('#calendarModal').modal('show');
+
+        // 모달 필드에 값 입력
+        document.getElementById('alias').value = decodeURIComponent(productName);
+        document.getElementById('start').value = expiryDate ? `${expiryDate}T00:00` : '';
+
+        // URL 파라미터 제거
+        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({ path: newUrl }, '', newUrl);
+      }
+    });
+
+  </script>
+
+  <!-- 모달창 이벤트 처리 코드 -->
+  <script>
+    // 모달창 닫기 이벤트
+    $('#calendarModal').on('hidden.bs.modal', function () {
+      // 모달창이 닫힐 때 일정 이름과 시작 시간 초기화
+      $("#alias").val("");  // alias 입력 필드 초기화
+      $("#start").val("");  // 시작 시간 필드 초기화
+      $("#color").val("red");  // 배경색상 필드 초기화
+    });
+
+    // 모달창 이벤트 처리 코드
+    $("#saveChanges").on("click", function () {
+      var eventData = {
+        alias: $("#alias").val(),
+        start: $("#start").val(),
+        backgroundColor: $("#color").val(),
+      };
+
+      // 빈값 입력 시 오류 처리
+      if (eventData.alias === "" || eventData.start === "") {
+        alert("입력하지 않은 값이 있습니다.");
+      } else {
+        // 이벤트를 캘린더에 직접 추가하고 고유 ID 부여
+        axios.post('/calendar', eventData)
+          .then(function (response) {
+            // 서버에서 생성된 이벤트 ID를 반환
+            const eventId = response.data.id;
+
+            // 캘린더에 이벤트 추가
+            calendar.addEvent({
+              id: eventId, // 서버에서 반환한 ID로 설정
+              title: eventData.alias,
+              start: eventData.start,
+              backgroundColor: eventData.backgroundColor,
+            });
+
+            // 모달 창 닫기
+            $("#calendarModal").modal("hide");
+
+            // 필드 초기화
+            $("#alias").val("");
+            $("#start").val("");
+            $("#color").val("red");
+
+            // 페이지 새로고침
+            location.reload(); // 이벤트 추가 후 페이지 새로고침
+          })
+          .catch(function (error) {
+            console.error('Error saving event:', error);
+          });
+      }
+    });
+
+
+  </script>
+
+</body>
+
+</html>

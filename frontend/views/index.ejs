@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>써도 되나?</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-xl">
+            <a class="navbar-brand" href="/">
+                <img src="/images/logo.png" alt="써도되나" title="써도되나">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse m-5" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-5 ml-auto">
+                    <li class="nav-item active d-inline text-right">
+                        <a class="nav-link" href="#">제품 소비기한 계산 및 등록</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/look">내 제품 소비기한 조회</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/calendar">캘린더 일정 확인하기</a>
+                    </li>
+                </ul>
+                <% if (user) { %>
+                    <button class="btn btn-look" id="logoutButton">로그아웃</button>
+                    <% } else { %>
+                        <button class="btn btn-look" onClick="location.href='/login'">로그인</button>
+                        <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <div class="image">
+        <div class="main-text">
+            <p class="h1 mb-0 text-white font-weight-bolder text-center d-block">당신이 사용하고 있는 모든 것에는</p>
+            <p class="h1 mt-0 mb-3 text-white font-weight-bolder text-center d-block">소비기한이 있다는 사실을 알고 계신가요?</p>
+            <p class="h2 mb-5 text-white font-weight-bolder text-center d-block">걱정마세요, '써도 되나?'가 계산해줄게요!</p>
+        </div>
+        <!-- 버튼을 별도의 div로 이동하여 이미지 위에 정확히 위치시키기 -->
+        <div class="calculate-button">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#inputModal">소비기한 계산하기</button>
+        </div>
+        <img src="/images/home_bg.jpg" class="d-block w-100" alt="메인 비주얼 이미지 1" title="메인 비주얼 이미지 1">
+    </div>
+
+    <!-- 모달 창 HTML -->
+    <div class="modal fade expiry-modal" id="inputModal" tabindex="-1" aria-labelledby="inputModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog custom-modal-size">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inputModalLabel">제품 정보 입력</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- 기존 입력 필드를 모달 내로 이동 -->
+                    <!-- 파일 업로드 필드 추가 -->
+                    <div class="file-upload-container text-center mt-3">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <input type="text" class="form-control" value="제품 사진 업로드" readonly style="width: 48%;">
+                            <input type="file" class="form-control" id="productImage" accept="image/*"
+                                style="width: 48%;">
+                        </div>
+                    </div>
+
+                    <div class="alias-container text-center mt-3">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <input type="text" class="form-control" value="(필수) 제품명" readonly style="width: 48%;">
+                            <input type="text" class="form-control" id="aliasTextField" placeholder="제품명을 입력하세요"
+                                style="width: 48%;">
+                        </div>
+                    </div>
+
+                    <div class="category-select-container text-center mt-3">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <select name="type" id="categorySelect" class="form-control category-select"
+                                style="width: 48%; border-radius: 10px; padding-left: 20px;">
+                                <option value="">(필수) 카테고리 선택</option>
+                                <option value="100">화장품</option>
+                                <option value="200">의약품 및 건강기능식품</option>
+                                <option value="300">식품</option>
+                                <option value="400">기타</option>
+                            </select>
+                            <button class="btn btn-category" onclick="showFields()"
+                                style="width: 48%; margin-top: 0; background-color: #e9ecef;">카테고리 선택하기</button>
+                        </div>
+                    </div>
+
+                    <div class="fields-container text-center mt-4" id="fieldsContainer" style="display: none;">
+                        <!-- 기존 필드들: 유통기한, 개봉일자, 소비기간 선택 등 -->
+                        <div class="field" id="generalFields" style="display: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <input type="text" class="form-control" value="개봉일자" readonly style="width: 48%;">
+                                <input type="date" class="form-control" id="openDateField" style="width: 48%;"
+                                    onchange="calculateExpiryDate()">
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <input type="text" class="form-control" value="소비기간" readonly
+                                    style="margin-top: 20px; width: 32%;">
+                                <select class="form-control" id="makeupField" style="margin-top: 20px; width: 32%;"
+                                    onchange="autoSelectOptions()">
+                                    <option value="">화장품 카테고리 선택</option>
+                                    <option value="101">기초 화장품</option>
+                                    <option value="102">클렌저</option>
+                                    <option value="103">선크림</option>
+                                    <option value="104">기초 메이크업</option>
+                                    <option value="105">아이 메이크업</option>
+                                    <option value="106">립스틱</option>
+                                    <option value="107">매니큐어</option>
+                                    <option value="108">향수</option>
+                                    <option value="109">틴트</option>
+                                </select>
+                                <input list="quantityOptions" id="quantityField" class="form-control"
+                                    style="margin-top: 20px; width: 32%;" onchange="calculateExpiryDate()">
+                                <datalist id="quantityOptions">
+                                    <option value="1Month">
+                                    <option value="2Month">
+                                    <option value="3Month">
+                                    <option value="4Month">
+                                    <option value="5Month">
+                                    <option value="6Month">
+                                    <option value="7Month">
+                                    <option value="8Month">
+                                    <option value="9Month">
+                                    <option value="10Month">
+                                    <option value="11Month">
+                                    <option value="1Year">
+                                    <option value="18Month">
+                                    <option value="2Year">
+                                    <option value="3Year">
+                                </datalist>
+                            </div>
+                            <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                                * 소비기간을 모를 경우, 제품에 적혀있는 유통기한을 소비기한에 입력해주세요.
+                            </p>
+                            <h3
+                                style="font-size: 30px; color: black; margin-top: 5px; width: 100%; display: inline-block;">
+                                ▶</h3>
+                        </div>
+                        <div class="field" id="expiryField">
+                            <input type="text" class="form-control" value="(필수) 소비기한" readonly
+                                style="margin-top: 20px; width: 100%; display: inline-block;">
+                            <input type="date" class="form-control" id="calculatedExpiryField"
+                                style="margin-top: 5px; width: 100%; display: inline-block;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-primary" id="registerButton">등록하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer">
+        <div class="container-xl">
+            <div class="line mt-5"></div>
+            <img src="/images/logo.png" class="mt-5" alt="">
+            <img src="/images/sns.png" class="d-block mt-2 sns" alt="">
+            <p class="text-dark">Copyright(c) 2024 써도 되나?. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- jQuery와 Bootstrap JS 추가 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <<script>
+        var userId = '<%= user ? user.userId : "null" %>';
+            </script>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', (event) => {
+                    const logoutButton = document.getElementById('logoutButton');
+                    if (logoutButton) {
+                        logoutButton.addEventListener('click', () => {
+                            fetch('/auth/logout', {
+                                method: 'GET',
+                                credentials: 'include'
+                            })
+                                .then(response => {
+                                    if (response.redirected) {
+                                        window.location.href = response.url;
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Logout error:', error);
+                                });
+                        });
+                    }
+                });
+
+                function showFields() {
+                    const categorySelect = document.getElementById('categorySelect');
+                    const fieldsContainer = document.getElementById('fieldsContainer');
+                    const generalFields = document.getElementById('generalFields');
+                    const expiryField = document.getElementById('expiryField');
+                    const makeupField = document.getElementById('makeupField');
+
+                    if (categorySelect.value) {
+                        fieldsContainer.style.display = 'block';
+                        if (categorySelect.value === '100') {
+                            generalFields.style.display = 'block';
+                            expiryField.style.display = 'block';
+                            makeupField.style.display = 'block';
+                        } else if (categorySelect.value === '400') {
+                            generalFields.style.display = 'block';
+                            expiryField.style.display = 'block';
+                            makeupField.style.display = 'none';
+                        }
+                        else if (categorySelect.value === '200' || categorySelect.value === '300') {
+                            generalFields.style.display = 'none';
+                            expiryField.style.display = 'block';
+                        } else {
+                            generalFields.style.display = 'none';
+                            expiryField.style.display = 'none';
+                        }
+                    } else {
+                        fieldsContainer.style.display = 'none';
+                    }
+                }
+
+                function autoSelectOptions() {
+                    const makeupField = document.getElementById('makeupField');
+                    const quantityField = document.getElementById('quantityField');
+
+                    if (makeupField.value === "101" || makeupField.value === "102" || makeupField.value === "104" || makeupField.value === "107") {
+                        quantityField.value = "1Year";
+                    } else if (makeupField.value === "103"|| makeupField.value === "105"|| makeupField.value === "109") {
+                        quantityField.value = "6Month";
+                    } else if (makeupField.value === "106") {
+                        quantityField.value = "18Month";
+                    } else if (makeupField.value === "108") {
+                        quantityField.value = "2Year";
+                    }    
+                    calculateExpiryDate(); // Update expiry date automatically
+                }
+
+                function calculateExpiryDate() {
+                    const openDateField = document.getElementById('openDateField').value;
+                    const quantityField = document.getElementById('quantityField').value;
+                    const expiryDateField = document.getElementById('calculatedExpiryField'); // 수정: calculatedExpiryField로 변경
+
+                    if (openDateField && quantityField) {
+                        const openDate = new Date(openDateField);
+                        let monthsToAdd = 0;
+                        let yearsToAdd = 0;
+
+                        if (quantityField.includes('Month')) {
+                            monthsToAdd = parseInt(quantityField.replace('Month', ''), 10);
+                        } else if (quantityField.includes('Year')) {
+                            yearsToAdd = parseInt(quantityField.replace('Year', ''), 10);
+                        }
+
+                        openDate.setMonth(openDate.getMonth() + monthsToAdd);
+                        openDate.setFullYear(openDate.getFullYear() + yearsToAdd);
+
+                        const calculatedDate = openDate.toISOString().split('T')[0];
+
+                        expiryDateField.value = calculatedDate; // calculatedExpiryField의 value를 설정
+                    }
+                }
+
+                // '등록하기'버튼을 누르면 데이터베이스에 저장됨   
+                document.getElementById('registerButton').addEventListener('click', () => {
+                    // userId가 설정되어 있는지 확인
+                    if (!userId || userId === 'null') {
+                        alert('로그인이 필요합니다.');
+                        return;  // 로그인하지 않은 경우 서버에 요청을 보내지 않음
+                    }
+
+                    const alias = document.getElementById('aliasTextField').value;
+                    const expiry_date = document.getElementById('calculatedExpiryField').value;
+                    let categoryId = document.getElementById('categorySelect').value;
+                    const productImage = document.getElementById('productImage').files[0]; // 파일 가져오기
+
+                    // 입력값 검증
+                    if (!alias) {
+                        alert('별칭은 필수 입력 항목입니다.');
+                        return;  // 입력이 없으면 함수 종료
+                    }
+
+                    if (!expiry_date) {
+                        alert('소비기한은 필수 입력 항목입니다.');
+                        return;  // 입력이 없으면 함수 종료
+                    }
+
+                    if (categoryId === '100') {
+                        const makeupField = document.getElementById('makeupField').value;
+                        if (makeupField) {
+                            categoryId = makeupField; // 서브 카테고리가 선택되면 categoryId를 해당 값으로 설정
+                        }
+                    }
+
+                    // FormData 객체 생성 및 데이터 추가
+                    const formData = new FormData();
+                    formData.append('alias', alias);
+                    formData.append('expiry_date', expiry_date);
+                    formData.append('categoryId', categoryId);
+                    formData.append('userId', userId); // userId를 요청에 포함
+                    if (productImage) {
+                        formData.append('productImage', productImage); // 파일을 FormData에 추가
+                    }
+
+                    // POST 요청으로 서버에 데이터 전송
+                    fetch('/api/products/register-product', {
+                        method: 'POST',
+                        body: formData, // FormData를 사용하여 전송
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                alert('제품이 성공적으로 등록되었습니다.');
+                                // 모달 창 초기화
+                                resetModal();
+                            } else {
+                                alert('제품 등록이 실패하였습니다.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while registering the product. Please try again later.');
+                        });
+                });
+
+                // 모달창 초기화
+                function resetModal() {
+                    // 입력 필드 초기화
+                    const aliasTextField = document.getElementById('aliasTextField');
+                    if (aliasTextField) aliasTextField.value = '';
+
+                    const expiryDateField = document.getElementById('expiryDateField');
+                    if (expiryDateField) expiryDateField.value = '';
+
+                    const openDateField = document.getElementById('openDateField');
+                    if (openDateField) openDateField.value = '';
+
+                    const makeupField = document.getElementById('makeupField');
+                    if (makeupField) makeupField.value = '';
+
+                    const quantityField = document.getElementById('quantityField');
+                    if (quantityField) quantityField.value = '';
+
+                    const calculatedExpiryField = document.getElementById('calculatedExpiryField');
+                    if (calculatedExpiryField) calculatedExpiryField.value = '';
+
+                    // 카테고리 선택 및 필드들 초기화
+                    const categorySelect = document.getElementById('categorySelect');
+                    if (categorySelect) categorySelect.value = '';
+
+                    const fieldsContainer = document.getElementById('fieldsContainer');
+                    if (fieldsContainer) fieldsContainer.style.display = 'none';
+
+                    const generalFields = document.getElementById('generalFields');
+                    if (generalFields) generalFields.style.display = 'none';
+
+                    const expiryField = document.getElementById('expiryField');
+                    if (expiryField) expiryField.style.display = 'none';
+
+                    // 모달 창을 닫기
+                    $('#inputModal').modal('hide');
+                }
+
+            </script>
+</body>
+
+</html>
