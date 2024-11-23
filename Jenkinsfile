@@ -24,6 +24,7 @@ pipeline {
 			-e MYSQL_ROOT_PASSWORD=cancanii! \
 			-e MYSQL_DATABASE=canIuseit_db \
 			-p 3306:3306 mysql:8
+		}
             }
         }
 
