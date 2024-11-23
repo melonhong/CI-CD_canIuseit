@@ -6,7 +6,7 @@ const Product = require('./Product');
 
 const initDb = async () => {
   await sequelize.sync({ force: false });
-  console.log('Database synchronized');
+  await Product.sync({ force: false });
 
   // 카테고리별 소비기한 기준 데이터 초기화 // 이거 우리 카테고리 번호로 해야하는거잖아..!! -준희
   /*await Category.bulkCreate([
@@ -31,6 +31,8 @@ const initDb = async () => {
     { categoryId: 300, name: '식품', shelfLifeDays: null},
     { categoryId: 400, name: '기타', shelfLifeDays: null}
   ], { ignoreDuplicates: true });  // 중복된 항목 무시
+  
+  console.log('Database synchronized');
 };
 
 module.exports = { sequelize, initDb, Category, User, Product };
