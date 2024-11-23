@@ -51,7 +51,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // 여기서 테스트를 추가할 수 있음
+			sh "echo 4"
                 }
             }
         }
