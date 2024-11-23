@@ -11,7 +11,7 @@ COPY . .
 WORKDIR /usr/src/app/backend
 
 # 필요한 패키지 설치
-RUN npm install
+RUN npm ci 
 
 # 서버 실행 포트 공개
 EXPOSE 3000
