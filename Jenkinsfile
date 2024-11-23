@@ -18,12 +18,14 @@ pipeline {
         stage('Run DB Container') {
             steps {
                 script {
-                    // 데이터베이스 컨테이너 실행
+			// 데이터베이스 컨테이너 실행
+			sh '''
 			docker run -d --name $DB_CONTAINER_NAME \
 			--network $NETWORK_NAME \
 			-e MYSQL_ROOT_PASSWORD=cancanii! \
 			-e MYSQL_DATABASE=canIuseit_db \
 			-p 3306:3306 mysql:8
+			'''
 		}
             }
         }
