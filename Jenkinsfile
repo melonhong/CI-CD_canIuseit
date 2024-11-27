@@ -50,13 +50,17 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    echo "Sending request to the server..."
-                    RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" http://$JENKINS_SERVER_ADDR:3000)
+		    echo "Checking container is available..."
+		    docker ps
+		    docker logs $WEB_CONTAINER_NAME
+		    echo "Waiting for DB to initialize..."
+            	    sleep 20	
+		    echo "Sending request to the server..."
+                    RESPONSE=$(curl -o --max-time 10 /dev/null -s -w "%{http_code}" http://localhost:3000)
                     if [ "$RESPONSE" -eq 200 ]; then
                         echo "Server is running properly. HTTP Status: $RESPONSE"
                     else
                         echo "Test failed! HTTP Status: $RESPONSE"
-			docker logs $WEB_CONTAINER_NAME
                     fi
                     '''
                 }
