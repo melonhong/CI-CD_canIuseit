@@ -22,6 +22,7 @@ pipeline {
                     sh 'chmod 777 .'
 
                     // .env 파일을 작업 디렉토리에 복사
+			/////
                     sh "sudo cp ${MY_ENV_FILE} .env"
 
                 }
