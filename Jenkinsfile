@@ -20,6 +20,8 @@ pipeline {
                     // 작업 디렉토리에 쓰기 권한 부여
                     sh 'chmod 777 .'
 
+
+		    echo "Bug?"
                     // .env 파일을 작업 디렉토리에 복사
                     sh "cp ${MY_ENV_FILE} .env"
                 }
