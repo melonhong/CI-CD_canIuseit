@@ -6,6 +6,7 @@ pipeline {
         DB_CONTAINER_NAME = 'db_container'
         WEB_CONTAINER_NAME = 'web_container'
         WEB_IMAGE_NAME = 'myapp'
+	JENKINS_SERVER_ADDR = 'http://34.83.123.95'
     }
 
     stages {
@@ -50,7 +51,7 @@ pipeline {
                 script {
                     sh '''
                     echo "Sending request to the server..."
-                    RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:3000)
+                    RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" http://$JENKINS_SERVER_ADDR:3000)
                     if [ "$RESPONSE" -eq 200 ]; then
                         echo "Server is running properly. HTTP Status: $RESPONSE"
                     else
