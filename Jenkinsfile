@@ -51,7 +51,17 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-			sh "echo 4"
+			// 서버에 요청을 보내고 HTTP 상태 코드를 확인
+            		sh '''
+            		echo "Sending request to the server..."
+            		RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:3000)
+            		if [ "$RESPONSE" -eq 200 ]; then
+                		echo "Server is running properly. HTTP Status: $RESPONSE"
+            		else
+                		echo "Test failed! HTTP Status: $RESPONSE"
+                	exit 1
+            		fi
+            		'''
                 }
             }
         }
