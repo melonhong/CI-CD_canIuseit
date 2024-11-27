@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Create docker network') {
             steps {
-                sh 'docker network create $NETWORK_NAME | true'
+                sh 'docker network create $NETWORK_NAME || true'
             }
         }
 
@@ -64,15 +64,13 @@ pipeline {
 
     post {
         always {
-            stage('Clean up') {
-                steps {
-                    script {
-                        sh "docker stop $WEB_CONTAINER_NAME $DB_CONTAINER_NAME || true"
-                        sh "docker rm $WEB_CONTAINER_NAME $DB_CONTAINER_NAME || true"
-                        sh "docker rmi $WEB_IMAGE_NAME || true"
-                    }
-                }
-            }
+            echo 'Cleaning up Docker resources...'
+            sh '''
+            docker stop $WEB_CONTAINER_NAME $DB_CONTAINER_NAME || true
+            docker rm $WEB_CONTAINER_NAME $DB_CONTAINER_NAME || true
+            docker rmi $WEB_IMAGE_NAME || true
+            docker network rm $NETWORK_NAME || true
+            '''
         }
     }
 }
