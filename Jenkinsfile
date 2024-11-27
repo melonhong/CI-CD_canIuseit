@@ -56,6 +56,7 @@ pipeline {
                         echo "Server is running properly. HTTP Status: $RESPONSE"
                     else
                         echo "Test failed! HTTP Status: $RESPONSE"
+			docker logs $WEB_CONTAINER_NAME
                     fi
                     '''
                 }
