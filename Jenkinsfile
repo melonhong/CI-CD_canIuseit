@@ -16,7 +16,6 @@ pipeline {
                 script {
                     // Secret File을 다운로드하고, 환경 변수로 로드
                     sh "cp ${MY_ENV_FILE} .env"  // Secret File을 작업 디렉터리에 복사
-                    sh "cat .env"  // .env 파일 내용 출력 (테스트용)
 
                     // .env 파일을 source 명령으로 불러오기
                     sh "source .env && echo 'Environment variables loaded'"
@@ -47,6 +46,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker build -t $WEB_IMAGE_NAME .'
+		    sh 'docker cp .env web_container:/usr/src/app/backend/.env'
                 }
             }
         }
