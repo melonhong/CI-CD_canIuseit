@@ -50,7 +50,7 @@ pipeline {
                 script {
                     sh '''
                     echo "Sending request to the server..."
-                    RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" http://<JENKINS_SERVER_IP>:3000)
+                    RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:3000)
                     if [ "$RESPONSE" -eq 200 ]; then
                         echo "Server is running properly. HTTP Status: $RESPONSE"
                     else
