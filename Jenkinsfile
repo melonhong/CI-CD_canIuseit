@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         NETWORK_NAME = 'mynetwork'
-        DB_CONTAINER_NAME = 'db_container'
+        DB_CONTAINER_NAME = 'mysql-container'
         WEB_CONTAINER_NAME = 'web_container'
         WEB_IMAGE_NAME = '20221174/ci-cd:1.1'
 	JENKINS_SERVER_ADDR = '34.83.123.95'
@@ -51,7 +51,6 @@ pipeline {
                 script {
                     sh '''
 		    echo "Checking container is available..."
-		    docker exec web_container cat /usr/src/app/config/database.js
 		    docker ps
 		    docker logs $WEB_CONTAINER_NAME
 		    echo "Waiting for DB to initialize..."
