@@ -73,12 +73,12 @@ pipeline {
                     sleep 20	
                     echo "Sending request to the server..."
 		    docker logs $WEB_CONTAINER_NAME
-		    docker exec web_container curl --max-time 10 -s -w "%{http_code}" -o /dev/null http://localhost:3000
-                    if [ "$RESPONSE" -eq 200 ]; then
-                        echo "Server is running properly. HTTP Status: $RESPONSE"
-                    else
-                        echo "Test failed! HTTP Status: $RESPONSE"
-                    fi
+		    RESPONSE=$(docker exec web_container curl --max-time 10 -s -w "%{http_code}" -o /dev/null http://localhost:3000)
+		    if [ "$RESPONSE" -eq 200 ]; then
+		    	echo "Server is running properly. HTTP Status: $RESPONSE"
+		    else
+    			echo "Test failed! HTTP Status: $RESPONSE"
+		    fi
                     '''
                 }
             }
