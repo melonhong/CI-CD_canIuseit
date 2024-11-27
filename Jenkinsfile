@@ -14,8 +14,14 @@ pipeline {
 	stage('Extract Env Variables') {
             steps {
                 script {
-                    // Secret File을 다운로드하고, 환경 변수로 로드
-                    sh "cp ${MY_ENV_FILE} .env"  // Secret File을 작업 디렉터리에 복사
+		    // .env 파일 권한 확인 후, 읽기/쓰기 권한 추가
+                    sh 'chmod 644 ${MY_ENV_FILE}'
+
+                    // 작업 디렉토리에 쓰기 권한 부여
+                    sh 'chmod 777 .'
+
+                    // .env 파일을 작업 디렉토리에 복사
+                    sh "cp ${MY_ENV_FILE} .env"
                 }
             }
         }
