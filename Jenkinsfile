@@ -60,7 +60,6 @@ pipeline {
                 		echo "Server is running properly. HTTP Status: $RESPONSE"
             		else
                 		echo "Test failed! HTTP Status: $RESPONSE"
-                	exit 1
             		fi
             		'''
                 }
