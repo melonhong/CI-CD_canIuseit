@@ -51,12 +51,6 @@ pipeline {
             steps {
                 script {
                     sh 'docker build -t $WEB_IMAGE_NAME .'
-
-                    // .env 파일을 컨테이너로 복사
-                    sh 'docker cp .env $WEB_CONTAINER_NAME:/usr/src/app/.env'
-
-                    // .env 파일을 컨테이너 내에서 적절한 권한으로 설정
-                    sh 'docker exec -u root $WEB_CONTAINER_NAME chmod 644 /usr/src/app/.env'
                 }
             }
         }
