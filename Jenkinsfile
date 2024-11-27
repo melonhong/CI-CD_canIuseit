@@ -51,6 +51,7 @@ pipeline {
                 script {
                     sh '''
 		    echo "Checking container is available..."
+		    docker exec -it $WEB_CONTAINER_NAME bash -c "cat /usr/src/app/config/database.js"
 		    docker ps
 		    docker logs $WEB_CONTAINER_NAME
 		    echo "Waiting for DB to initialize..."
