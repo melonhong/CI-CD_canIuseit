@@ -6,7 +6,7 @@ pipeline {
         DB_CONTAINER_NAME = 'db_container'
         WEB_CONTAINER_NAME = 'web_container'
         WEB_IMAGE_NAME = 'myapp'
-	JENKINS_SERVER_ADDR = 'http://34.83.123.95'
+	JENKINS_SERVER_ADDR = '34.83.123.95'
     }
 
     stages {
