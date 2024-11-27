@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Create docker network') {
             steps {
-                sh 'docker network create $NETWORK_NAME'
+                sh 'docker network create $NETWORK_NAME | true'
             }
         }
 
