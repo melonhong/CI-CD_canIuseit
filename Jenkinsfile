@@ -66,16 +66,19 @@ pipeline {
             }
         }
 
-        stage('Clean up') {
-            steps {
-                script {
-                    // 컨테이너 종료 및 이미지 삭제 (선택사항)
-                    sh "docker stop $WEB_CONTAINER_NAME $DB_CONTAINER_NAME"
-                    sh "docker rm $WEB_CONTAINER_NAME $DB_CONTAINER_NAME"
-                    sh "docker rmi $WEB_IMAGE_NAME"
-                }
-            }
-        }
+	post {
+        	always {
+            		stage('Clean up') {
+                		steps {
+                    			script {
+                        			sh "docker stop $WEB_CONTAINER_NAME $DB_CONTAINER_NAME || true"
+                        			sh "docker rm $WEB_CONTAINER_NAME $DB_CONTAINER_NAME || true"
+                        			sh "docker rmi $WEB_IMAGE_NAME || true"
+                    			}
+               	 		}
+            		}
+        	}
+    	}
     }
 }
 
