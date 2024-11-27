@@ -2,28 +2,27 @@ pipeline {
     agent any
 
     environment {
-	MY_ENV_FILE = credentials('MY_ENV_FILE')
+        // Secret File을 가져오는 부분
+        MY_ENV_FILE = credentials('MY_ENV_FILE')  // .env 파일의 Jenkins credentials ID
         NETWORK_NAME = 'mynetwork'
         DB_CONTAINER_NAME = 'db_container'
         WEB_CONTAINER_NAME = 'web_container'
         WEB_IMAGE_NAME = '20221174/ci-cd:1.1'
-	JENKINS_SERVER_ADDR = '34.83.123.95'
+        JENKINS_SERVER_ADDR = '34.83.123.95'
     }
 
     stages {
-	stage('Extract Env Variables') {
+        stage('Extract Env Variables') {
             steps {
                 script {
-		    // .env 파일 권한 확인 후, 읽기/쓰기 권한 추가
-                    sh 'chmod 644 ${MY_ENV_FILE}'
+                    // .env 파일을 작업 디렉토리에 복사
+                    sh "cp ${MY_ENV_FILE} .env"
+
+                    // .env 파일 권한 확인 후, 읽기/쓰기 권한 추가
+                    sh 'chmod 644 .env'
 
                     // 작업 디렉토리에 쓰기 권한 부여
                     sh 'chmod 777 .'
-
-
-		    echo "Bug?"
-                    // .env 파일을 작업 디렉토리에 복사
-                    sh "cp ${MY_ENV_FILE} .env"
                 }
             }
         }
@@ -51,11 +50,12 @@ pipeline {
             steps {
                 script {
                     sh 'docker build -t $WEB_IMAGE_NAME .'
-		    // 먼저 .env 파일의 권한을 수정하고 복사하는 방법
-                    sh 'docker exec -u root $WEB_CONTAINER_NAME chmod 777 /usr/src/app'
 
                     // .env 파일을 컨테이너로 복사
                     sh 'docker cp .env $WEB_CONTAINER_NAME:/usr/src/app/.env'
+
+                    // .env 파일을 컨테이너 내에서 적절한 권한으로 설정
+                    sh 'docker exec -u root $WEB_CONTAINER_NAME chmod 644 /usr/src/app/.env'
                 }
             }
         }
@@ -72,12 +72,12 @@ pipeline {
             steps {
                 script {
                     sh '''
-		    echo "Checking container is available..."
-		    docker ps
-		    docker logs $WEB_CONTAINER_NAME
-		    echo "Waiting for DB to initialize..."
-            	    sleep 20	
-		    echo "Sending request to the server..."
+                    echo "Checking container is available..."
+                    docker ps
+                    docker logs $WEB_CONTAINER_NAME
+                    echo "Waiting for DB to initialize..."
+                    sleep 20	
+                    echo "Sending request to the server..."
                     RESPONSE=$(curl --max-time 10 -s -w "%{http_code}" -o /dev/null http://localhost:3000)
                     if [ "$RESPONSE" -eq 200 ]; then
                         echo "Server is running properly. HTTP Status: $RESPONSE"
@@ -102,3 +102,4 @@ pipeline {
         }
     }
 }
+
