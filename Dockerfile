@@ -11,7 +11,10 @@ COPY . .
 WORKDIR /usr/src/app/backend
 
 # 필요한 패키지 설치
-RUN npm ci 
+RUN npm install 
+
+# 젠킨스에 존재하는 .env 파일을 컨테이너로 복사
+COPY .env .env 
 
 # 서버 실행 포트 공개
 EXPOSE 3000
