@@ -16,9 +16,6 @@ pipeline {
                 script {
                     // Secret File을 다운로드하고, 환경 변수로 로드
                     sh "cp ${MY_ENV_FILE} .env"  // Secret File을 작업 디렉터리에 복사
-
-                    // .env 파일을 source 명령으로 불러오기
-                    sh "source .env && echo 'Environment variables loaded'"
                 }
             }
         }
@@ -46,7 +43,11 @@ pipeline {
             steps {
                 script {
                     sh 'docker build -t $WEB_IMAGE_NAME .'
-		    sh 'docker cp .env web_container:/usr/src/app/backend/.env'
+		    // 먼저 .env 파일의 권한을 수정하고 복사하는 방법
+                    sh 'docker exec -u root $WEB_CONTAINER_NAME chmod 777 /usr/src/app'
+
+                    // .env 파일을 컨테이너로 복사
+                    sh 'docker cp .env $WEB_CONTAINER_NAME:/usr/src/app/.env'
                 }
             }
         }
