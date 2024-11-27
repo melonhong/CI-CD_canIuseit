@@ -53,6 +53,7 @@ pipeline {
                 script {
 			// 서버에 요청을 보내고 HTTP 상태 코드를 확인
             		sh '''
+			docker ps
             		echo "Sending request to the server..."
             		RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:3000)
             		if [ "$RESPONSE" -eq 200 ]; then
