@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: web-container
-        image: 20221174/ci-cd:1.1
+        image: 20221174/ci-cd:latest
         ports:
         - containerPort: 3000
 ---
