@@ -8,7 +8,10 @@ pipeline {
         DB_CONTAINER_NAME = 'db_container'
         WEB_CONTAINER_NAME = 'web_container'
         WEB_IMAGE_NAME = '20221174/ci-cd:1.1'
-        JENKINS_SERVER_ADDR = '34.83.123.95'
+        PROJECT_ID = 'open-source-software-435607'
+	CLUSTER_NAME = 'cluster'
+	LOCATION = 'us-central1-c'
+	CREDENTIALS_ID ='mygke'
     }
 
     stages {
@@ -83,6 +86,24 @@ pipeline {
                 }
             }
         }
+
+	stage('Deploy to GKE') {
+		steps {
+			script {
+				// Docker 이미지 빌드 후, GKE에 배포할 때 이미지 태그를 빌드 ID로 변경
+                    		//sh "sed -i 's/cicd:latest/cicd:${env.BUILD_ID}/g' deployment.yaml"
+
+                    		// Kubernetes Engine으로 배포
+				step([$class: 'KubernetesEngineBuilder', 
+				      projectId: env.PROJECT_ID, 
+				      clusterName: env.CLUSTER_NAME,
+				      location: env.LOCATION, 
+				      manifestPattern: 'deployment.yaml', 
+				      credentialsId: env.CREDENTIALS_ID,
+				      verifyDeployments: true])
+			}
+		}
+	}
     }
 
     post {
