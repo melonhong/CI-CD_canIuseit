@@ -101,6 +101,18 @@ pipeline {
 				      manifestPattern: 'deployment.yaml', 
 				      credentialsId: env.CREDENTIALS_ID,
 				      verifyDeployments: true])
+
+				// 배포된 파드가 실행되도록 잠시 기다리기 (5초~10초 대기)
+			        echo "Waiting for the pods to be ready..."
+			        sleep time: 30, unit: 'SECONDS'  // 파드가 준비되는 데 약간의 시간이 필요
+			
+			        // 파드를 5분 동안 실행하고 삭제
+			        echo "Pods will run for 5 minutes..."
+			        sleep time: 5, unit: 'MINUTES'  // 5분 대기
+			
+			        // 5분 후 파드 삭제
+			        echo "Deleting the pods after 5 minutes..."
+			        sh 'kubectl delete pods --selector=app=hello'  // `app=hello` 라벨을 가진 파드 삭제
 			}
 		}
 	}
