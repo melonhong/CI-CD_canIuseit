@@ -96,12 +96,6 @@ pipeline {
                           manifestPattern: 'deployment.yaml', 
                           credentialsId: env.CREDENTIALS_ID,
                           verifyDeployments: true])
-
-                    echo "Waiting for the pods to be ready..."
-                    sleep time: 30, unit: 'SECONDS'
-                    
-                    echo "Pods will run for 5 minutes..."
-                    sleep time: 5, unit: 'MINUTES'
                 }
             }
         }
