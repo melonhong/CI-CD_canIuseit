@@ -102,9 +102,6 @@ pipeline {
                     
                     echo "Pods will run for 5 minutes..."
                     sleep time: 5, unit: 'MINUTES'
-                    
-                    echo "Deleting the pods after 5 minutes..."
-                    sh 'kubectl delete pods --selector=app=hello'
                 }
             }
         }
