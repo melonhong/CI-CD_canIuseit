@@ -6,7 +6,7 @@ pipeline {
         NETWORK_NAME = 'mynetwork'
         DB_CONTAINER_NAME = 'db_container'
         WEB_CONTAINER_NAME = 'web_container'
-        WEB_IMAGE_NAME = '20221174/ci-cd:${env.BUILD_ID}'
+        WEB_IMAGE_NAME = '20221174/ci-cd'
         PROJECT_ID = 'open-source-software-435607'
         CLUSTER_NAME = 'cluster'
         LOCATION = 'us-central1-c'
