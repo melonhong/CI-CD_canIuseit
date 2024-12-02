@@ -2,28 +2,23 @@ pipeline {
     agent any
 
     environment {
-        // Secret File을 가져오는 부분
-        MY_ENV_FILE = credentials('MY_ENV_FILE')  // .env 파일의 Jenkins credentials ID
+        MY_ENV_FILE = credentials('MY_ENV_FILE')
         NETWORK_NAME = 'mynetwork'
         DB_CONTAINER_NAME = 'db_container'
         WEB_CONTAINER_NAME = 'web_container'
-        WEB_IMAGE_NAME = '20221174/ci-cd:1.1'
-        JENKINS_SERVER_ADDR = '34.83.123.95'
+        WEB_IMAGE_NAME = '20221174/ci-cd'
+        PROJECT_ID = 'open-source-software-435607'
+        CLUSTER_NAME = 'cluster'
+        LOCATION = 'us-central1-c'
+        CREDENTIALS_ID = 'mygke'
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub') // Docker Hub 크리덴셜 ID
     }
 
     stages {
         stage('Extract Env Variables') {
             steps {
                 script {
-                    // .env 파일 권한 확인 후, 읽기/쓰기 권한 추가
-                    sh 'chmod 644 .env'
-
-                    // 작업 디렉토리에 쓰기 권한 부여
-                    sh 'chmod 777 .'
-
-                    // .env 파일을 작업 디렉토리에 복사
-		    sh "cat ${MY_ENV_FILE} > .env"
-
+                    sh "cat ${MY_ENV_FILE} > .env"
                 }
             }
         }
@@ -32,7 +27,6 @@ pipeline {
                 sh 'docker network create $NETWORK_NAME || true'
             }
         }
-
         stage('Run DB Container') {
             steps {
                 script {
@@ -46,7 +40,6 @@ pipeline {
                 }
             }
         }
-
         stage('Build Web Container') {
             steps {
                 script {
@@ -54,7 +47,18 @@ pipeline {
                 }
             }
         }
-
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    // Docker Hub 로그인
+                    sh "echo ${DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${DOCKER_HUB_CREDENTIALS_USR} --password-stdin"
+                    // Docker Hub에 이미지 푸시
+                    sh 'docker push $WEB_IMAGE_NAME'
+                    // 로그아웃
+                    sh 'docker logout'
+                }
+            }
+        }
         stage('Run Web Container') {
             steps {
                 script {
@@ -62,7 +66,6 @@ pipeline {
                 }
             }
         }
-
         stage('Test') {
             steps {
                 script {
@@ -70,16 +73,29 @@ pipeline {
                     echo "Checking container is available..."
                     docker ps
                     echo "Waiting for DB to initialize..."
-                    sleep 20	
+                    sleep 20
                     echo "Sending request to the server..."
-		    docker logs $WEB_CONTAINER_NAME
-		    RESPONSE=$(docker exec web_container curl --max-time 10 -s -w "%{http_code}" -o /dev/null http://localhost:3000)
-		    if [ "$RESPONSE" -eq 200 ]; then
-		    	echo "Server is running properly. HTTP Status: $RESPONSE"
-		    else
-    			echo "Test failed! HTTP Status: $RESPONSE"
-		    fi
+                    docker logs $WEB_CONTAINER_NAME
+                    RESPONSE=$(docker exec web_container curl --max-time 10 -s -w "%{http_code}" -o /dev/null http://localhost:3000)
+                    if [ "$RESPONSE" -eq 200 ]; then
+                        echo "Server is running properly. HTTP Status: $RESPONSE"
+                    else
+                        echo "Test failed! HTTP Status: $RESPONSE"
+                    fi
                     '''
+                }
+            }
+        }
+        stage('Deploy to GKE') {
+            steps {
+                script {
+                    step([$class: 'KubernetesEngineBuilder', 
+                          projectId: env.PROJECT_ID, 
+                          clusterName: env.CLUSTER_NAME,
+                          location: env.LOCATION, 
+                          manifestPattern: 'deployment.yaml', 
+                          credentialsId: env.CREDENTIALS_ID,
+                          verifyDeployments: true])
                 }
             }
         }
@@ -97,4 +113,3 @@ pipeline {
         }
     }
 }
-
