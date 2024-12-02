@@ -65,7 +65,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-service
+  name: mysql-container
   labels:
     app: db-app
 spec:
