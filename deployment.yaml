@@ -19,6 +19,7 @@ spec:
         image: 20221174/ci-cd:latest
         ports:
         - containerPort: 3000
+        command: ["node", "index.js"]
 ---
 apiVersion: v1
 kind: Service
