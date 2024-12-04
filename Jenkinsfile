@@ -4,14 +4,13 @@ pipeline {
     environment {
         MY_ENV_FILE = credentials('MY_ENV_FILE')
         NETWORK_NAME = 'mynetwork'
-        DB_CONTAINER_NAME = 'db_container'
         WEB_CONTAINER_NAME = 'web_container'
         WEB_IMAGE_NAME = '20221174/ci-cd'
         PROJECT_ID = 'open-source-software-435607'
         CLUSTER_NAME = 'cluster'
         LOCATION = 'us-central1-c'
         CREDENTIALS_ID = 'mygke'
-        DOCKER_HUB_CREDENTIALS = credentials('dockerhub') // Docker Hub 크리덴셜 ID
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub') 
     }
 
     stages {
@@ -22,24 +21,7 @@ pipeline {
                 }
             }
         }
-        stage('Create docker network') {
-            steps {
-                sh 'docker network create $NETWORK_NAME || true'
-            }
-        }
-        stage('Run DB Container') {
-            steps {
-                script {
-                    sh '''
-                    docker run -d --name $DB_CONTAINER_NAME \
-                    --network $NETWORK_NAME \
-                    -e MYSQL_ROOT_PASSWORD=cancanii! \
-                    -e MYSQL_DATABASE=canIuseit_db \
-                    -p 3306:3306 mysql:8
-                    '''
-                }
-            }
-        }
+
         stage('Build Web Container') {
             steps {
                 script {
@@ -47,18 +29,17 @@ pipeline {
                 }
             }
         }
+
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    // Docker Hub 로그인
                     sh "echo ${DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${DOCKER_HUB_CREDENTIALS_USR} --password-stdin"
-                    // Docker Hub에 이미지 푸시
                     sh 'docker push $WEB_IMAGE_NAME'
-                    // 로그아웃
                     sh 'docker logout'
                 }
             }
         }
+
         stage('Run Web Container') {
             steps {
                 script {
@@ -66,14 +47,13 @@ pipeline {
                 }
             }
         }
+
         stage('Test') {
             steps {
                 script {
                     sh '''
                     echo "Checking container is available..."
                     docker ps
-                    echo "Waiting for DB to initialize..."
-                    sleep 20
                     echo "Sending request to the server..."
                     docker logs $WEB_CONTAINER_NAME
                     RESPONSE=$(docker exec web_container curl --max-time 10 -s -w "%{http_code}" -o /dev/null http://localhost:3000)
@@ -86,6 +66,7 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy to GKE') {
             steps {
                 script {
@@ -105,10 +86,9 @@ pipeline {
         always {
             echo 'Cleaning up Docker resources...'
             sh '''
-            docker stop $WEB_CONTAINER_NAME $DB_CONTAINER_NAME || true
-            docker rm $WEB_CONTAINER_NAME $DB_CONTAINER_NAME || true
+            docker stop $WEB_CONTAINER_NAME || true
+            docker rm $WEB_CONTAINER_NAME || true
             docker rmi $WEB_IMAGE_NAME || true
-            docker network rm $NETWORK_NAME || true
             '''
         }
     }
