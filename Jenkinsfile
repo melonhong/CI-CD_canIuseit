@@ -5,7 +5,7 @@ pipeline {
         MY_ENV_FILE = credentials('MY_ENV_FILE')
         NETWORK_NAME = 'mynetwork'
         WEB_CONTAINER_NAME = 'web_container'
-        WEB_IMAGE_NAME = '20221174/ci-cd:${env.BUILD_ID}'
+        WEB_IMAGE_NAME = '20221174/ci-cd'
         PROJECT_ID = 'open-source-software-435607'
         CLUSTER_NAME = 'cluster'
         LOCATION = 'us-central1-c'
@@ -25,7 +25,7 @@ pipeline {
         stage('Build Web Container') {
             steps {
                 script {
-                    sh 'docker build -t $WEB_IMAGE_NAME .'
+                    sh 'docker build -t $WEB_IMAGE_NAME:${env.BUILD_ID} .'
                 }
             }
         }
