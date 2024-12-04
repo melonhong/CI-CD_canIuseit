@@ -18,7 +18,7 @@
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: white;
+  color: yellow;
   text-align: center;
   width: 100%; /* 중앙 정렬 보장 */
 }
