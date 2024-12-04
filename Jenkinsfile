@@ -10,10 +10,18 @@ pipeline {
         CLUSTER_NAME = 'cluster'
         LOCATION = 'us-central1-c'
         CREDENTIALS_ID = 'mygke'
-        DOCKER_HUB_CREDENTIALS = credentials('dockerhub') // Docker Hub 크리덴셜 ID
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub') 
     }
 
     stages {
+        stage('Clone Repository') { // 추가된 Git 클론 단계
+            steps {
+                script {
+                    sh 'git clone https://github.com/20221174/CI-CD_canIuseit.git .'
+                }
+            }
+        }
+
         stage('Extract Env Variables') {
             steps {
                 script {
@@ -21,6 +29,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build Web Container') {
             steps {
                 script {
@@ -28,18 +37,17 @@ pipeline {
                 }
             }
         }
+
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    // Docker Hub 로그인
                     sh "echo ${DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${DOCKER_HUB_CREDENTIALS_USR} --password-stdin"
-                    // Docker Hub에 이미지 푸시
                     sh 'docker push $WEB_IMAGE_NAME'
-                    // 로그아웃
                     sh 'docker logout'
                 }
             }
         }
+
         stage('Run Web Container') {
             steps {
                 script {
@@ -47,6 +55,7 @@ pipeline {
                 }
             }
         }
+
         stage('Test') {
             steps {
                 script {
@@ -65,6 +74,7 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy to GKE') {
             steps {
                 script {
