@@ -17,7 +17,7 @@ pipeline {
         stage('Clone Repository') { // 추가된 Git 클론 단계
             steps {
                 script {
-                    sh 'rm -rf *'
+                    sh 'rm -rf ./*'
                     sh 'git clone https://github.com/20221174/CI-CD_canIuseit.git .'
                 }
             }
