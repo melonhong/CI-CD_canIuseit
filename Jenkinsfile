@@ -5,7 +5,7 @@ pipeline {
         MY_ENV_FILE = credentials('MY_ENV_FILE')
         NETWORK_NAME = 'mynetwork'
         WEB_CONTAINER_NAME = 'web_container'
-        //WEB_IMAGE_NAME = '20221174/ci-cd:${env.BUILD_ID}'
+        WEB_IMAGE_NAME = '20221174/ci-cd:${env.BUILD_ID}'
         PROJECT_ID = 'open-source-software-435607'
         CLUSTER_NAME = 'cluster'
         LOCATION = 'us-central1-c'
@@ -60,16 +60,8 @@ pipeline {
          stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    // Docker 이미지 빌드
-                    def myapp = docker.build("20221174/ci-cd:${env.BUILD_ID}")
-                    
-                    // Docker Hub에 푸시
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                        myapp.push("latest")  // latest 태그 푸시
-                        myapp.push("${env.BUILD_ID}")  // 빌드 넘버 태그 푸시
-                    }
-                    
-                    // Docker Hub 로그아웃
+                    sh "echo ${DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${DOCKER_HUB_CREDENTIALS_USR} --password-stdin"
+                    sh 'docker push $WEB_IMAGE_NAME'
                     sh 'docker logout'
                 }
             }
