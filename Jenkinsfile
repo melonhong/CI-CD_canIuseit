@@ -5,7 +5,7 @@ pipeline {
         MY_ENV_FILE = credentials('MY_ENV_FILE')
         NETWORK_NAME = 'mynetwork'
         WEB_CONTAINER_NAME = 'web_container'
-        WEB_IMAGE_NAME = '20221174/ci-cd'
+        WEB_IMAGE_NAME = '20221174/ci-cd:${BUILD_NUMBER}'
         PROJECT_ID = 'open-source-software-435607'
         CLUSTER_NAME = 'cluster'
         LOCATION = 'us-central1-c'
@@ -70,6 +70,7 @@ pipeline {
         stage('Deploy to GKE') {
             steps {
                 script {
+                    sh "sed -i 's|{{IMAGE_TAG}}|${BUILD_NUMBER}|g' deployment.yaml"
                     step([$class: 'KubernetesEngineBuilder', 
                           projectId: env.PROJECT_ID, 
                           clusterName: env.CLUSTER_NAME,
@@ -77,7 +78,6 @@ pipeline {
                           manifestPattern: 'deployment.yaml', 
                           credentialsId: env.CREDENTIALS_ID,
                           verifyDeployments: true])
-                    sh 'kubectl apply -f deployment.yaml'
                 }
             }
         }
