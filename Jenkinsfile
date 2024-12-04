@@ -5,7 +5,7 @@ pipeline {
         MY_ENV_FILE = credentials('MY_ENV_FILE')
         NETWORK_NAME = 'mynetwork'
         WEB_CONTAINER_NAME = 'web_container'
-        WEB_IMAGE_NAME = '20221174/ci-cd:${env.BUILD_ID}'
+        //WEB_IMAGE_NAME = '20221174/ci-cd:${env.BUILD_ID}'
         PROJECT_ID = 'open-source-software-435607'
         CLUSTER_NAME = 'cluster'
         LOCATION = 'us-central1-c'
@@ -61,7 +61,7 @@ pipeline {
             steps {
                 script {
                     sh "echo ${DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${DOCKER_HUB_CREDENTIALS_USR} --password-stdin"
-                    sh 'docker push $WEB_IMAGE_NAME'
+                    sh 'docker push 20221174/ci-cd:${env.BUILD_ID}'
                     sh 'docker logout'
                 }
             }
