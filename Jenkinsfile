@@ -71,7 +71,7 @@ pipeline {
         stage('Deploy to GKE') {
             steps {
                 script {
-                    sh "sed -i 's/20221174/:latest/hello:${env.BUILD_ID}/g' deployment.yaml"
+                    sh "sed -i 's/20221174/ci-cd:latest/20221174/ci-cd:${env.BUILD_ID}/g' deployment.yaml"
                     step([$class: 'KubernetesEngineBuilder', 
                           projectId: env.PROJECT_ID, 
                           clusterName: env.CLUSTER_NAME,
