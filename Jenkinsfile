@@ -77,7 +77,7 @@ pipeline {
                           manifestPattern: 'deployment.yaml', 
                           credentialsId: env.CREDENTIALS_ID,
                           verifyDeployments: true])
-                    sh "kubectl apply -f deployment.yaml'
+                    sh 'kubectl apply -f deployment.yaml'
                 }
             }
         }
