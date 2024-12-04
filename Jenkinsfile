@@ -60,12 +60,21 @@ pipeline {
          stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
+                    // 이미지를 빌드하고 myapp 변수에 저장
+                    myapp = docker.build("20221174/ci-cd:${env.BUILD_ID}")
+                }
+                script {
+                    // Docker Hub 로그인
                     sh "echo ${DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${DOCKER_HUB_CREDENTIALS_USR} --password-stdin"
-                    sh 'docker push 20221174/ci-cd:${env.BUILD_ID}'
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                    myapp.push("latest")
+                    myapp.push("${env.BUILD_ID}")
+                    }
+                    // Docker Hub 로그아웃
                     sh 'docker logout'
                 }
             }
-        }
+}
 
         stage('Deploy to GKE') {
             steps {
