@@ -69,6 +69,9 @@ pipeline {
 }
 
         stage('Deploy to GKE') {
+            when {
+                expression { env.BRANCH_NAME == 'main' }
+            }
             steps {
                 script {
                     sh "sed -i 's#20221174/ci-cd:latest#20221174/ci-cd:${env.BUILD_ID}#g' deployment.yaml"
