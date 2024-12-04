@@ -60,15 +60,15 @@ pipeline {
          stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    // 이미지를 빌드하고 myapp 변수에 저장
-                    myapp = docker.build("20221174/ci-cd:${env.BUILD_ID}")
-
-                    // Docker Hub 로그인
-                    sh "echo ${DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${DOCKER_HUB_CREDENTIALS_USR} --password-stdin"
+                    // Docker 이미지 빌드
+                    def myapp = docker.build("20221174/ci-cd:${env.BUILD_ID}")
+                    
+                    // Docker Hub에 푸시
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                        myapp.push("latest")
-                        myapp.push("${env.BUILD_ID}")
+                        myapp.push("latest")  // latest 태그 푸시
+                        myapp.push("${env.BUILD_ID}")  // 빌드 넘버 태그 푸시
                     }
+                    
                     // Docker Hub 로그아웃
                     sh 'docker logout'
                 }
