@@ -25,17 +25,7 @@ pipeline {
         stage('Build Web Container') {
             steps {
                 script {
-                    sh 'docker build -t $WEB_IMAGE_NAME .'
-                }
-            }
-        }
-
-        stage('Push Docker Image to Docker Hub') {
-            steps {
-                script {
-                    sh "echo ${DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${DOCKER_HUB_CREDENTIALS_USR} --password-stdin"
-                    sh 'docker push $WEB_IMAGE_NAME'
-                    sh 'docker logout'
+                    myapp = docker.build("${env.WEB_IMAGE_NAME}:${env.BUILD_ID}")
                 }
             }
         }
@@ -67,9 +57,21 @@ pipeline {
             }
         }
 
+         stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        myapp.push("latest")
+                        myapp.push("${env.BUILD_ID}")
+                        }
+                }
+            }
+}
+
         stage('Deploy to GKE') {
             steps {
                 script {
+                    sh "sed -i 's#20221174/ci-cd:latest#20221174/ci-cd:${env.BUILD_ID}#g' deployment.yaml"
                     step([$class: 'KubernetesEngineBuilder', 
                           projectId: env.PROJECT_ID, 
                           clusterName: env.CLUSTER_NAME,
