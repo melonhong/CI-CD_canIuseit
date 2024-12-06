@@ -48,7 +48,7 @@ pipeline {
                         echo "Sending request to the server..."
 
                         # RESPONSE 변수에 curl을 통해 상태 코드를 저장
-                        RESPONSE=$(docker exec $WEB_CONTAINER_NAME curl -s -v -w "%{http_code}" -o response_body.txt http://localhost:3000)
+                        RESPONSE=$(docker exec $WEB_CONTAINER_NAME curl -s -v -w "%{http_code}" -o http://localhost:3000)
                         
                         # 상태 코드가 200인지 확인
                         if [ "$RESPONSE" = "200" ]; then
@@ -56,10 +56,6 @@ pipeline {
                         else
                             echo "Test failed! HTTP Status: $RESPONSE"
                         fi
-                        
-                        # 항상 response_body.txt 파일의 내용 출력
-                        echo "Response Body:"
-                        cat response_body.txt
                         
                         # 컨테이너 로그 출력
                         echo "Logs from the container:"
@@ -108,8 +104,8 @@ pipeline {
     always {
             echo 'Cleaning up Docker resources...'
             sh '''
-                //docker stop $WEB_CONTAINER_NAME || true
-                //docker rm $WEB_CONTAINER_NAME || true
+                docker stop $WEB_CONTAINER_NAME || true
+                docker rm $WEB_CONTAINER_NAME || true
                 docker rmi $WEB_IMAGE_NAME:$BUILD_ID
                 docker rmi $WEB_IMAGE_NAME:latest
             '''
