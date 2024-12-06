@@ -48,7 +48,7 @@ pipeline {
                         echo "Sending request to the server..."
 
                         # RESPONSE 변수에 curl을 통해 상태 코드를 저장
-                        RESPONSE=$(docker exec $WEB_CONTAINER_NAME curl -s -v -w "%{http_code}" http://localhost:3000)
+                        RESPONSE=$(docker exec $WEB_CONTAINER_NAME curl -s -w "%{http_code}" http://localhost:3000)
                         
                         # 상태 코드가 200인지 확인
                         if [ "$RESPONSE" = "200" ]; then
