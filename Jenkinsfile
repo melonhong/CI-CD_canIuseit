@@ -42,15 +42,17 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    echo "Checking container is available..."
-                    docker ps
                     echo "Sending request to the server..."
-                    RESPONSE=$(docker exec web_container curl --max-time 10 -s -w "%{http_code}" -o /dev/null http://localhost:3000)
-                    if [ "$RESPONSE" -eq 200 ]; then
+                    RESPONSE=$(docker exec $WEB_CONTAINER_NAME curl -s -w "%{http_code}" -o response_body.txt http://127.0.0.1:3000)
+                    
+                    if [ "$RESPONSE" = "200" ]; then
                         echo "Server is running properly. HTTP Status: $RESPONSE"
                     else
                         echo "Test failed! HTTP Status: $RESPONSE"
-                    docker logs $WEB_CONTAINER_NAME
+                        echo "Response Body:"
+                        cat response_body.txt
+                        docker logs $WEB_CONTAINER_NAME
+                        exit 1
                     fi
                     '''
                 }
