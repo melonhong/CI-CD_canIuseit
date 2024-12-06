@@ -94,6 +94,7 @@ pipeline {
                 docker stop $WEB_CONTAINER_NAME || true
                 //docker rm $WEB_CONTAINER_NAME || true
                 docker rmi $WEB_IMAGE_NAME:$BUILD_ID
+                docker rmi $WEB_IMAGE_NAME:latest
             '''
         }
     }
