@@ -1,5 +1,5 @@
 # Node.js 이미지를 기반으로 함
-FROM node:18
+FROM node:20
 
 # 작업 디렉토리 설정
 WORKDIR /usr/src/app
@@ -11,7 +11,7 @@ COPY . .
 WORKDIR /usr/src/app/backend
 
 # 필요한 패키지 설치
-RUN npm install 
+RUN npm ci
 
 # 젠킨스에 존재하는 .env 파일을 컨테이너로 복사
 COPY .env .env 
