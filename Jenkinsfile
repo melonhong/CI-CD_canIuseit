@@ -42,6 +42,9 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        echo "Waiting for server to start..."
+                        sleep 10
+                        
                         echo "Sending request to the server..."
 
                         # RESPONSE 변수에 curl을 통해 상태 코드를 저장
