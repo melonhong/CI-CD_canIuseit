@@ -93,7 +93,7 @@ pipeline {
             sh '''
             docker stop $WEB_CONTAINER_NAME || true
             docker rm $WEB_CONTAINER_NAME || true
-            docker rmi $WEB_IMAGE_NAME || true
+            docker rmi $WEB_IMAGE_NAME:${env.BUILD_ID} || true
             '''
         }
     }
