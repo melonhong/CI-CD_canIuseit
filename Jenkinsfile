@@ -42,18 +42,30 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    echo "Sending request to the server..."
-                    RESPONSE=$(docker exec $WEB_CONTAINER_NAME curl -s -w "%{http_code}" -o response_body.txt http://127.0.0.1:3000)
-                    
-                    if [ "$RESPONSE" = "200" ]; then
-                        echo "Server is running properly. HTTP Status: $RESPONSE"
-                    else
-                        echo "Test failed! HTTP Status: $RESPONSE"
+                        echo "Sending request to the server..."
+
+                        # RESPONSE 변수에 curl을 통해 상태 코드를 저장
+                        RESPONSE=$(docker exec $WEB_CONTAINER_NAME curl -s -w "%{http_code}" -o response_body.txt http://127.0.0.1:3000)
+                        
+                        # 상태 코드가 200인지 확인
+                        if [ "$RESPONSE" = "200" ]; then
+                            echo "Server is running properly. HTTP Status: $RESPONSE"
+                        else
+                            echo "Test failed! HTTP Status: $RESPONSE"
+                        fi
+                        
+                        # 항상 response_body.txt 파일의 내용 출력
                         echo "Response Body:"
                         cat response_body.txt
+                        
+                        # 컨테이너 로그 출력
+                        echo "Logs from the container:"
                         docker logs $WEB_CONTAINER_NAME
-                        exit 1
-                    fi
+                        
+                        # 테스트 실패 시 종료
+                        if [ "$RESPONSE" != "200" ]; then
+                            exit 1
+                        fi
                     '''
                 }
             }
