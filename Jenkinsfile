@@ -42,16 +42,29 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    echo "Checking container is available..."
-                    docker ps
-                    echo "Sending request to the server..."
-                    docker logs $WEB_CONTAINER_NAME
-                    RESPONSE=$(docker exec web_container curl --max-time 10 -s -w "%{http_code}" -o /dev/null http://localhost:3000)
-                    if [ "$RESPONSE" -eq 200 ]; then
-                        echo "Server is running properly. HTTP Status: $RESPONSE"
-                    else
-                        echo "Test failed! HTTP Status: $RESPONSE"
-                    fi
+                        echo "Waiting for server to start..."
+                        sleep 10
+                        
+                        echo "Sending request to the server..."
+
+                        # RESPONSE 변수에 curl을 통해 상태 코드를 저장
+                        RESPONSE=$(docker exec $WEB_CONTAINER_NAME curl -s -w "%{http_code}" -o /dev/null http://localhost:3000)
+                        
+                        # 상태 코드가 200인지 확인
+                        if [ "$RESPONSE" = "200" ]; then
+                            echo "Server is running properly. HTTP Status: $RESPONSE"
+                        else
+                            echo "Test failed! HTTP Status: $RESPONSE"
+                        fi
+                        
+                        # 컨테이너 로그 출력
+                        echo "Logs from the container:"
+                        docker logs $WEB_CONTAINER_NAME
+                        
+                        # 테스트 실패 시 종료
+                        if [ "$RESPONSE" != "200" ]; then
+                            exit 1
+                        fi
                     '''
                 }
             }
@@ -94,6 +107,7 @@ pipeline {
                 docker stop $WEB_CONTAINER_NAME || true
                 docker rm $WEB_CONTAINER_NAME || true
                 docker rmi $WEB_IMAGE_NAME:$BUILD_ID
+                docker rmi $WEB_IMAGE_NAME:latest
             '''
         }
     }
