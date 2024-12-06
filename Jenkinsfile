@@ -63,7 +63,7 @@ pipeline {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
                         myapp.push("latest")
                         myapp.push("${env.BUILD_ID}")
-                        }
+                    }
                 }
             }
 }
@@ -88,12 +88,12 @@ pipeline {
     }
 
     post {
-        always {
+    always {
             echo 'Cleaning up Docker resources...'
             sh '''
-            docker stop $WEB_CONTAINER_NAME || true
-            docker rm $WEB_CONTAINER_NAME || true
-            docker rmi $WEB_IMAGE_NAME:${env.BUILD_ID} || true
+                docker stop ${WEB_CONTAINER_NAME} || true
+                docker rm ${WEB_CONTAINER_NAME} || true
+                docker rmi ${WEB_IMAGE_NAME}:${env.BUILD_ID}
             '''
         }
     }
