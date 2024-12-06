@@ -71,6 +71,9 @@ pipeline {
         }
 
          stage('Push Docker Image to Docker Hub') {
+            when {
+                expression { env.BRANCH_NAME == 'main' }
+            }
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
