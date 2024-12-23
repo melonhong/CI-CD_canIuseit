@@ -109,10 +109,10 @@ pipeline {
             sh '''
                 docker stop $WEB_CONTAINER_NAME || true
                 docker rm $WEB_CONTAINER_NAME || true
-                docker rmi registry.hub.docker.com/$WEB_IMAGE_NAME:$BUILD_ID || true
-                docker rmi registry.hub.docker.com/$WEB_IMAGE_NAME:latest || true
-                docker rmi $WEB_IMAGE_NAME:$BUILD_ID || true
-                docker rmi $WEB_IMAGE_NAME:latest || true
+                //docker rmi registry.hub.docker.com/$WEB_IMAGE_NAME:$BUILD_ID
+                //docker rmi registry.hub.docker.com/$WEB_IMAGE_NAME:latest
+                docker rmi $WEB_IMAGE_NAME:$BUILD_ID
+                docker rmi $WEB_IMAGE_NAME:latest
             '''
         }
     }
