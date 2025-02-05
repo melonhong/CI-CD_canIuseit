@@ -2,6 +2,12 @@
 team - 
 project - can I use it ?
 
+<br />
+
+# 시연 영상
+[시연 영상 1](https://youtu.be/lgLnvRLSWRs)
+[시연 영상 2](https://youtu.be/ILNLP22bFAo)
+
 <br/>
 
 # 준비 사항
